@@ -1,3 +1,8 @@
 from django.db import models
 
-# Create your models here.
+class Article(models.Model):
+    url = models.URLField()
+    title = models.CharField(max_length=300)
+    read = models.BooleanField()
+    content = models.TextField()
+
