@@ -12,8 +12,7 @@ def import_pinboard(username, password, user):
         except:
             continue
         if content:
-            article = Article()
-            article.url = bookmark['href']
+            article, created = Article.objects.get_or_create(url=bookmark['href'])
             article.title = bookmark['description']
             article.content = content
             article.save()
@@ -34,8 +33,7 @@ def import_reddit(username, password, user):
         except:
             return
         if content:
-            article = Article()
-            article.url = link['url']
+            article, created = Article.objects.get_or_create(url=link['url'])
             article.title = link['title']
             article.content = content
             article.save()
