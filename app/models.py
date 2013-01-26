@@ -1,3 +1,4 @@
+import nltk
 from django.db import models
 
 class Article(models.Model):
@@ -9,3 +10,10 @@ class Article(models.Model):
     def __unicode__(self):
         return '%s' % self.url
 
+    @property
+    def text(self):
+        return nltk.clean_html(self.content)
+
+    @property
+    def tokens(self):
+        return nltk.word_tokenize(self.text)
