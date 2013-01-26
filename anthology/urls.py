@@ -5,6 +5,8 @@ from django.conf.urls import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^$', 'app.views.index'),
+    url(r'^login/$', 'django.contrib.auth.views.login'),
     # Examples:
     # url(r'^$', 'anthology.views.home', name='home'),
     # url(r'^anthology/', include('anthology.foo.urls')),
