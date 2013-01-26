@@ -1,11 +1,13 @@
 import nltk
 from django.db import models
+from django.contrib.auth.models import User
 
 class Article(models.Model):
     url = models.URLField(unique=True)
     title = models.CharField(max_length=300)
     read = models.BooleanField()
     content = models.TextField()
+    users = models.ManyToManyField(User)
 
     def __unicode__(self):
         return '%s' % self.url

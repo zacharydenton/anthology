@@ -2,7 +2,7 @@ import requests
 from readability.readability import Document
 from app.models import Article
 
-def import_pinboard(username, password):
+def import_pinboard(username, password, user):
     api = requests.get('http://api.pinboard.in/v1/posts/all?format=json', auth=requests.auth.HTTPBasicAuth(username, password))
     for bookmark in api.json():
         try:
@@ -18,4 +18,5 @@ def import_pinboard(username, password):
             article.read = bookmark['toread'] == 'no'
             article.content = content
             article.save()
+            article.users.add(user)
 
