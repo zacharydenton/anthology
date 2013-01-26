@@ -3,6 +3,9 @@ import magic
 import slate
 import requests
 from readability import readability
+from sklearn.feature_extraction.text import *
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
 from app.models import Article, PersonalArticle
 
 USER_AGENT = 'Anthology 3.14'
@@ -95,4 +98,28 @@ def fetch_reddit():
                 article.title = data['title']
                 article.content = content
                 article.save()
+
+def build_classifier(user):
+    liked = user.article_set.filter(personalarticle__liked=True)
+    disliked = user.article_set.filter(personalarticle__liked=False)
+    docs_liked = [article.text for article in liked]
+    docs_disliked = [article.text for article in disliked]
+    docs = docs_liked + docs_disliked
+    labels = [True for doc in docs_liked] + [False for doc in docs_disliked]
+    
+    classifier = Pipeline([
+        ('vect', CountVectorizer()),
+        ('tfidf', TfidfTransformer()),
+        ('clf', MultinomialNB()),
+    ])
+    classifier.fit(docs, labels)
+
+    return classifier
+    
+def new_articles(user):
+    classifier = build_classifier(user)
+    docs_new = Article.objects.filter(users__isnull=True)
+    predicted = classifier.predict([article.text for article in docs_new])
+    return [article for recommended, article in zip(predicted, docs_new) if recommended]
+
 
