@@ -1,26 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Vocab</h2>
-<table class="table">
-	<thead>
-		<tr>
-			<th>Word</th>
-			<th>Frequency</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for word, frequency in vocab %}
-		<tr>
-			<td>{{ word }}</td>
-			<td>{{ frequency }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
-
-<h2>Articles</h2>
+<h1>Articles</h1>
 {% for article in articles %}
-<h3><a href="{{ article.url }}">{{ article.title }}</a></h3>
+<article>
+<h2><a href="{{ article.url }}">{{ article.title }}</a></h2>
+{{ article.content|truncatewords_html:100|safe }}
+</article>
+<hr />
 {% endfor %}
 {% endblock %}
