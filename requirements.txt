@@ -1,0 +1,10 @@
+Django==1.4.3
+PyYAML==3.10
+chardet==2.1.1
+distribute==0.6.31
+ipython==0.13.1
+lxml==3.1beta1
+nltk==2.0.4
+readability-lxml==0.2.6.1
+requests==1.1.0
+wsgiref==0.1.2
