@@ -77,3 +77,22 @@ def import_reddit(username, password, user):
     for link in r.json()['data']['children']:
         add_link(link['data'], False)
 
+def fetch_reddit():
+    api = requests.Session()
+    api.headers.update({'User-Agent': USER_AGENT})
+    subreddits = ['Foodforthought', 'YouShouldKnow', 'DepthHub', 'TrueReddit']
+    for subreddit in subreddits:
+        r = api.get('http://www.reddit.com/r/%s/new.json?sort=new' % subreddit)
+        for link in r.json()['data']['children']:
+            data = link['data']
+            try:
+                article = Article.objects.get(url=data['url'])
+            except Article.DoesNotExist:
+                article = Article()
+                content = fetch_article(data['url'])
+                if not content: continue
+                article.url = data['url']
+                article.title = data['title']
+                article.content = content
+                article.save()
+
