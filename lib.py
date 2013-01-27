@@ -80,10 +80,9 @@ def import_reddit(username, password, user):
     for link in r.json()['data']['children']:
         add_link(link['data'], False)
 
-def fetch_reddit():
+def fetch_reddit(subreddits=['Foodforthought', 'YouShouldKnow', 'DepthHub', 'TrueReddit']):
     api = requests.Session()
     api.headers.update({'User-Agent': USER_AGENT})
-    subreddits = ['Foodforthought', 'YouShouldKnow', 'DepthHub', 'TrueReddit']
     for subreddit in subreddits:
         r = api.get('http://www.reddit.com/r/%s/new.json?sort=new' % subreddit)
         for link in r.json()['data']['children']:
@@ -100,8 +99,9 @@ def fetch_reddit():
                 article.save()
 
 def build_classifier(user):
-    liked = user.article_set.filter(personalarticle__liked=True)
-    disliked = user.article_set.filter(personalarticle__liked=False)
+    read = user.article_set.filter(personalarticle__read=True)
+    liked = read.filter(personalarticle__liked=True)
+    disliked = read.filter(personalarticle__liked=False)
     docs_liked = [article.text for article in liked]
     docs_disliked = [article.text for article in disliked]
     docs = docs_liked + docs_disliked
@@ -115,11 +115,3 @@ def build_classifier(user):
     classifier.fit(docs, labels)
 
     return classifier
-    
-def new_articles(user):
-    classifier = build_classifier(user)
-    docs_new = Article.objects.filter(users__isnull=True)
-    predicted = classifier.predict([article.text for article in docs_new])
-    return [article for recommended, article in zip(predicted, docs_new) if recommended]
-
-
